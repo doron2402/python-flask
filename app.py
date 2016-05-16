@@ -46,8 +46,8 @@ def home():
     return render_template('home.html')
 
 @app.route('/contact')
-def contact(info):
-    return render_template('contact/thank_you')
+def contact():
+    return render_template('contact/form.html')
 
 @app.route('/users')
 def getAllUsers():
@@ -57,6 +57,12 @@ def getAllUsers():
             
     return render_template('users/all.html', users=usersTmp)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html', error_msg="404"), 404
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('errors/500.html', error_msg="500"), 500
 
 if __name__ == '__main__':
    app.run(host=HOST, port=PORT, debug=True)
