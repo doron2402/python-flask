@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, jsonify, make_response
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from datetime import datetime
@@ -34,6 +34,11 @@ users = {
     }
 }
 
+contactInfo = [{
+    "email": "test@test.com",
+    "mobile": "123-345-5677"
+}]
+
 @app.route('/')
 def base():
   return render_template('home.html', current_time=datetime.utcnow())
@@ -54,9 +59,24 @@ def contact():
 
 @app.route('/contact',  methods=['POST'])
 def postContact():
-    print request.form
-    email = request.form.email
-    return render_template('contact/thank_you.html', data=email)
+    email = request.form["email"]
+    if str(email) == "":
+        response = make_response(jsonify(code="error"), 400)
+        return response
+    
+    contactInfo.append(request.form)
+    
+    return jsonify(email=email,
+                   code="ok",
+                   redirect_url="/contact/thanks/%s" % email)
+
+@app.route('/contact/all')
+def showAllContact():
+    return render_template('contact/all.html', data=contactInfo)
+
+@app.route('/contact/thanks/<email>')
+def thankYouContact(email):
+    return render_template('contact/thank_you.html', data=email)                   
 
 @app.route('/users')
 def getAllUsers():
