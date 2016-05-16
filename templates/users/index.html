@@ -1,0 +1,46 @@
+{% extends "bootstrap/base.html" %}
+{% import 'macros/comment.html' as macrosComment %}
+{% block title %} {{ user.name }} | Profile {% endblock %}
+{% block head %}
+ {{ super() }}
+ <style>
+ </style>
+{% endblock %}
+{% block body %}
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle"
+                            data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Logo</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/users">Users</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+<div class="container">
+<p>Hi {{ user.name }}</p>
+{% if user.admin %}
+    <p>Hello Admin</p>
+{% else %}
+    <p>Hello regular user</p>
+{% endif %}
+
+<ul>
+    {% for comment in user.comments %}
+        {{ macrosComment.render(comment) }}
+    {% endfor %}
+</ul>
+</div>
+{% endblock %}
