@@ -3,7 +3,7 @@
 {% block page_content %}
 <div class="page-header">
     <div class="container row">
-        <form role="form">
+        <form role="form" id="contact">
         <br style="clear:both">
                     <h3 style="margin-bottom: 25px; text-align: center;">Contact Form</h3>
                     <div class="form-group">
@@ -27,4 +27,46 @@
         </form>
     </div>
 </div>
+
+
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+    var submitForm = function(event) {
+        var formData = $('form#contact')
+        .serializeArray()
+        .reduce(function(formData, input) {
+            if (input.name) {
+                formData[input.name] = input.value || null
+            }
+            return formData;
+        });
+        $.ajax({
+            type: "POST",
+            url: '/contact',
+            data: formData,
+            success: function(data, statusCode){
+                alert('Success');
+                console.log(statusCode);
+            },
+            error: function(data) {
+                console.log(data);
+                alert('Error');
+            }
+            });
+    }
+    $(document).ready(function(){
+         $('span.help-block').hide();
+         $("#message").on('change keyup paste', function() {
+             if ($(this).val().length >= 140) {
+                 $('span.help-block').show();
+                 $('span.help-block > p').css('color','red');
+             } else {
+                 $('span.help-block').hide();
+             }
+        });
+        $('button#submit').click(submitForm)
+    });
+</script>
 {% endblock %}

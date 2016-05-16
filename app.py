@@ -1,13 +1,16 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, url_for
 from flask.ext.bootstrap import Bootstrap
+from flask.ext.moment import Moment
+from datetime import datetime
 
 PORT = os.getenv('PORT', 5000)
 HOST = os.getenv('HOST', '0.0.0.0')
 app = Flask(__name__)
 
-# adding bootstrap
+
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 
 users = {
@@ -33,7 +36,7 @@ users = {
 
 @app.route('/')
 def base():
-  return render_template('home.html')
+  return render_template('home.html', current_time=datetime.utcnow())
 
 @app.route('/users/<int:id>')
 def getUserById(id):
@@ -45,9 +48,15 @@ def getUserById(id):
 def home():
     return render_template('home.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET'])
 def contact():
     return render_template('contact/form.html')
+
+@app.route('/contact',  methods=['POST'])
+def postContact():
+    print request.form
+    email = request.form.email
+    return render_template('contact/thank_you.html', data=email)
 
 @app.route('/users')
 def getAllUsers():
